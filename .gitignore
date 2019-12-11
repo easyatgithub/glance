@@ -1,0 +1,9 @@
+.DS_Store
+.vscode
+dist/*
+build/*
+!build/icons
+package-lock.json
+node_modules/
+logs/
+todolist/backup/*
