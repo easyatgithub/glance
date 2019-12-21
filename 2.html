@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-default/index.css">
+    <style>
+        * {
+    margin: 0;
+    padding: 0
+}
+body {
+    font-family: Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB, Microsoft YaHei, SimSun, sans-serif;
+    overflow: auto;
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+}
+.tb-edit .el-input {
+    display: none
+}
+.tb-edit .current-row .el-input {
+    display: block
+}
+.tb-edit .current-row .el-input+span {
+    display: none
+}
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <el-table :data="tableData" class="tb-edit" style="width: 100%" highlight-current-row @row-click="handleCurrentChange" @current-change="handleSelectionChange">
+            <el-table-column label="日期" width="180">
+                <template scope="scope">
+                    <el-checkbox v-model="scope.row.checked"></el-checkbox> 
+                    <el-input size="small" v-model="scope.row.date" placeholder="请输入内容" @change="handleEdit(scope.$index, scope.row)"></el-input> <span>{{scope.row.date}}</span>
+                </template>
+            </el-table-column>
+            <el-table-column label="姓名" width="180">
+                <template scope="scope">
+                    <el-input size="small" v-model="scope.row.name" placeholder="请输入内容" @change="handleEdit(scope.$index, scope.row)"></el-input> <span>{{scope.row.name}}</span>
+                </template>
+            </el-table-column>
+            <el-table-column prop="address" label="地址">
+                <template scope="scope">
+                    <el-input size="small" v-model="scope.row.address" placeholder="请输入内容" @change="handleEdit(scope.$index, scope.row)"></el-input> <span>{{scope.row.address}}</span>
+                </template>
+            </el-table-column>
+            <el-table-column label="操作">
+                <template scope="scope">
+                    <!--<el-button size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>-->
+                    <el-button size="small" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+                </template>
+            </el-table-column>
+        </el-table>
+        <br>数据:{{tableData}}</div>
+        <el-button @click="test">Create Tables</el-button>
+</body>
+<script src="https://unpkg.com/vue/dist/vue.js"></script>
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script>
+    var app = new Vue({
+        el: '#app',
+        data: {
+            tableData: [{
+                  id:1,
+                  checked : false,
+                date: '2016-05-02',
+                name: '王小虎',
+                address: '上海市普陀区金沙江路 1518 弄'
+            },{
+                id:2,
+                checked : false,
+                date: '2016-05-03',
+                name: '王小虎',
+                address: '上海市普陀区金沙江路 1516 弄'
+            }]
+        },
+        methods: {
+            test(tab, event) {
+            console.log("遍历 table 组成sql"); 
+            sql = ""
+            this.tableData.forEach(item => {
+                if(item.checked) {
+                 sql = " PRIMARY KEY (`" + item.name + "`)"
+                }
+           })
+    },
+            handleCurrentChange(row, event, column) {
+                console.log(row, event, column, event.currentTarget)
+            },
+            handleEdit(index, row) {
+                console.log(index, row);
+            },
+            handleDelete(index, row) {
+                console.log(index, row);
+            },
+            handleSelectionChange (row) {
+　　　　
+            console.log("// el-radio单选框,不需要这一步",this.tableData)
+        this.tableData.forEach(item => {
+          // 排他,每次选择时把其他选项都清除
+          console.log(item.id, row.id);
+          if (item.id !== row.id) {
+            item.checked = false
+          }
+        })
+        
+　　　　　// 如果使用单选框,这里可以把当前选中的这一项先保存起来
+　　　　　this.currentSelectItem = row
+      }
+        }
+    })
+</script> 
+</html>
