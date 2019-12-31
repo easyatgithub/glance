@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+
+  <meta charset="UTF-8">
+  <!-- 引入样式 -->
+  <style>
+    .histoey {
+      width: 500px;
+      height: 400px;
+      overflow: auto;
+    }
+
+    td {
+      color: #666;
+      height: 30px;
+      width: 100px;
+    }
+
+    th {
+      border: 1px solid #cad9ea;
+      width: 90px;
+    }
+
+    table tr:nth-child(odd) {
+      background: #fff;
+    }
+
+    table tr:nth-child(even) {
+      background: #F5FAFA;
+    }
+
+    .msg {
+      width: 100%;
+      height: 150px;
+    }
+  </style>
+</head>
+<title>小竞猜游戏</title>
+
+
+<body>
+
+  <table>
+    <tr>
+      <th>时间期号</th>
+      <th>开奖结果</th>
+      <th>我的竞猜</th>
+      <th>赚取金额</th>
+      <th>余额</th>
+    </tr>
+  </table>
+  <div class="histoey">
+    <table id="main"> </table>
+  </div>
+  <div class="user">
+    <div class="curData" style="display: inline-block;">
+      <textarea id="my" placeholder="输入竞猜值 ">1,2,3</textarea>
+    </div>
+    <button id="open" onclick="ui.open()">手动开奖</button>
+    <div class="balance" style="display: inline-block;">
+
+    </div>
+
+  </div>
+  <textarea class="msg">这里是系统消息</textarea>
+</body>
+<script>
+  /*
+  历史区域
+  本次竞猜  账户余额
+  手动兑奖  定时兑奖
+  
+  */
+  Date.prototype.Format = function (fmt) {
+    var o = { "M+": this.getMonth() + 1, "d+": this.getDate(), "H+": this.getHours(), "m+": this.getMinutes(), "s+": this.getSeconds(), "q+": Math.floor((this.getMonth() + 3) / 3), "S": this.getMilliseconds() };
+    if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+    for (var k in o)
+      if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+    return fmt;
+  }
+
+  var ui = {
+    balance: 10,
+    init: function () {
+      document.querySelector('.balance').innerHTML = "当前余额:" + this.balance
+    },
+    msg: function (str) {
+      document.querySelector('.msg').value +=  "\n" +str 
+    },
+    updateUI: function () {
+      // document.getElementById('my').value=""
+      document.querySelector('.balance').innerHTML = "当前余额:" + this.balance
+    },
+    check: function (x, myArr) {
+      if (myArr.length == 1) {
+        for (e in x) {
+          if (x[e] == parseInt(myArr[0])) return "a"
+        }
+      }
+      if (myArr.length == 2) {
+        var step = 0;
+        for (e in x) {
+          if (x[e] == parseInt(myArr[0])) {
+		  step++;
+		  x.splice(e,1)
+		  break;
+		  }
+        }
+		
+        for (e in x) {
+          if (x[e] == parseInt(myArr[1]))  {
+		  step++;
+		  x.splice(e,1)
+		  break;
+		  }
+        }
+        if (step == 2){
+		 if(myArr[0]==myArr[1]){
+		   return "g"
+		 }
+		 return "b"
+		} 
+      }
+      if (myArr.length == 3) {
+        var step = 0;
+        for (e in x) {
+          if (x[e] == parseInt(myArr[e])) step++;
+        }
+        if (step == 3){
+		 if(myArr[0]==myArr[1] && myArr[1]==myArr[2]){
+		   return "f"
+		 }
+		 return "c"
+		}
+      }
+
+      return "e";
+    },
+    result: function (rightArr, myArr) {
+      var msg = {
+        a: { msg:"猜中 1个数  ,获得      3元",amount :3 },
+        b: { msg:"猜中 2个数  ,获得      9元",amount :9 },
+        c: { msg:"猜中 3个数  ,获得      27元",amount :27 },
+        d: { msg:"猜中两个数 当且仅当输入2个数 获得  8元",amount :8 },
+        e: { msg:"遗憾 暂时没有获奖 扣除费用 2元",amount :0 },
+		f: { msg:"非常精彩",amount :27*3 },
+		g: { msg:"对子",amount :18 },
+		g: { msg:"顺子",amount :27*2 },
+      }
+      var kind = this.check(rightArr, myArr);
+      switch (kind) {
+        case "a": this.balance += 3; break;
+        case "b": this.balance += 9; break;
+        case "c": this.balance += 27;break;
+        case "d": this.balance += 8; break;
+        case "e": break;
+		case "f": this.balance += 27*3; break;
+		case "g": this.balance += 18; break;
+      }
+      this.msg(msg[kind].msg); 
+      return msg[kind].amount;
+    },
+    goTOdivBottom: function () {
+      var div = document.querySelector('.histoey');
+      div.scrollTop = div.scrollHeight;
+      var msg = document.querySelector('.msg');
+      msg.scrollTop = msg.scrollHeight;
+    },
+    date: function () {
+      return new Date().Format("HH:mm:ss");
+    },
+    open1: function () {
+      table = document.querySelector("#srvTable")
+      row = table.insertRow();
+      cels = []
+      for (var i = 0; i < 3; i++) {
+        cels[i] = row.insertCell(i)
+      }
+
+      cels[0].innerHTML = "1"
+      cels[1].innerHTML = "2"
+      cels[2].innerHTML = "3"
+
+    },
+    open: function () {
+
+      var x = [-~(Math.random() * 6), -~(Math.random() * 6), -~(Math.random() * 6)]
+ 
+      s = document.getElementById('open').innerHTML
+      s = document.getElementById('my').value.replace(/[^0-9]/gi, "")
+      if (!s) {
+        this.msg("没有 竞猜哦")
+        return
+      }
+      this.balance -=2;
+      s = s.split("")
+      s = s.slice(0, 3)
+
+      table = document.querySelector("#main")
+      row = table.insertRow();
+      cels = []
+      for (var i = 0; i < 5; i++) {
+        cels[i] = row.insertCell(i)
+      }
+
+      cels[0].innerHTML = this.date()
+      cels[1].innerHTML = JSON.stringify(x)
+      cels[2].innerHTML = JSON.stringify(s)
+      cels[3].innerHTML = this.result(x, s)
+      cels[4].innerHTML = this.balance
+ 
+      this.updateUI()
+      this.goTOdivBottom()
+
+
+    },
+    ui: 1
+  }
+  ui.init()
+  // ui.open()
+</script>
+</html>

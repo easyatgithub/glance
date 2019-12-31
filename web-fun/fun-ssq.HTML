@@ -1,0 +1,286 @@
+ <style>
+      .left {
+        float: left;
+        width: 500px;
+        height: 700px;
+         background-color: #CCC;
+      }
+    
+      .right {
+        float: right;
+        width: 300px;
+        height: 700px;
+        background-color: #CCC;;
+      }
+    
+      .main {
+        background-color: #808;
+         height: 700px;
+        margin-left: 120px;
+        margin-right: 120px;
+      }
+    
+      .container {
+        border: 1px solid black;
+      }
+	  
+	   .histoey {
+      width: 500px;
+      height: 400px;
+      overflow: auto;
+    }
+
+    td {
+      color: #666;
+      height: 30px;
+      width: 100px;
+    }
+
+    th {
+      border: 1px solid #cad9ea;
+      width: 90px;
+    }
+
+    table tr:nth-child(odd) {
+      background: #fff;
+    }
+
+    table tr:nth-child(even) {
+      background: #F5FAFA;
+    }
+
+    .msg {
+      width: 100%;
+      height: 700px;
+    }
+	
+   </style>  
+      <div class="container">
+			  <div class="left">
+			   <table>
+    <tr>
+      <th>时间期号</th>
+      <th>开奖结果</th>
+      <th>我的竞猜</th>
+      <th>赚取金额</th>
+      <th>余额</th>
+    </tr>
+  </table>
+  <div class="histoey">
+    <table id="main"> </table>
+  </div>
+			   
+			  </div>
+			  <div class="right">
+				  <textarea class="msg">这里是系统消息</textarea>
+			  </div>
+			  <div class="main">
+			  
+			  <div class="curData" style="display: inline-block;">
+      <textarea id="my" placeholder="输入竞猜值 ">1,2,3,4,5,6,7</textarea>
+    </div>
+    <button id="open" onclick="ui.open()">手动开奖</button>
+	
+			  
+			  </div>
+      </div>
+	  
+	  
+	  
+	  
+	  <table width="100%" border="0" cellspacing="0" cellpadding="0"><thead><tr>
+            <th width="80">奖项</th>
+            <th width="130">中奖条件</th>
+            <th width="130" class="tar">全国中奖注数</th>
+            <th width="130" class="tar">360中奖注数</th>
+            <th class="tar">每注奖金</th>
+            </tr></thead><tbody><tr><td>一等奖</td><td>6+1</td><td class="tar">13(注)</td><td class="tar">--(注)</td><td class="tar"><em class="red">6,951,733</em>(元)</td></tr><tr><td>二等奖</td><td>6+0</td><td class="tar">276(注)</td><td class="tar">--(注)</td><td class="tar"><em class="red">114,911</em>(元)</td></tr><tr><td>三等奖</td><td>5+1</td><td class="tar">1,748(注)</td><td class="tar">--(注)</td><td class="tar"><em class="red">3,000</em>(元)</td></tr><tr><td>四等奖</td><td>5+0/4+1</td><td class="tar">84,386(注)</td><td class="tar">--(注)</td><td class="tar"><em class="red">200</em>(元)</td></tr><tr><td>五等奖</td><td>4+0/3+1</td><td class="tar">1,591,131(注)</td><td class="tar">--(注)</td><td class="tar"><em class="red">10</em>(元)</td></tr><tr><td>六等奖</td><td>2+1/1+1/0+1</td><td class="tar">11,017,466(注)</td><td class="tar">--(注)</td><td class="tar"><em class="red">5</em>(元)</td></tr></tbody></table>
+
+<script>
+  /*
+  
+  
+  */
+  Date.prototype.Format = function (fmt) {
+    var o = { "M+": this.getMonth() + 1, "d+": this.getDate(), "H+": this.getHours(), "m+": this.getMinutes(), "s+": this.getSeconds(), "q+": Math.floor((this.getMonth() + 3) / 3), "S": this.getMilliseconds() };
+    if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+    for (var k in o)
+      if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+    return fmt;
+  }
+
+  var ui = {
+    balance: 10,
+    init: function () {
+      document.querySelector('.balance').innerHTML = "当前余额:" + this.balance
+    },
+    msg: function (str) {
+      document.querySelector('.msg').value +=  "\n" +str 
+    },
+    updateUI: function () {
+      // document.getElementById('my').value=""
+      document.querySelector('.balance').innerHTML = "当前余额:" + this.balance
+    },
+	// 注意双色 球的玩法
+	
+    check: function (system, myArr) {
+	  var x =   system.slice(0,6)
+      var mySix =   myArr.slice(0,6)
+	  var mySeven = myArr[6]
+	  var systemSeven = system[6]
+       // 比较前6个有多少个在里面
+	  var step = 0;
+	   for (i in myArr) {
+         for (j in x) {
+           if( parseInt(myArr[i]) == x[j]){
+		      step++;
+			  break;
+		   }
+         }  
+        }
+		if(step==6){
+		 if(mySeven==systemSeven){
+			return "6+1";	 
+		 }
+			return "6+0";	 
+		}
+		if(step==5){
+		 if(mySeven==systemSeven){
+			return "5+1";	 
+		 }
+			return "5+0";	 
+		}
+		if(step==4){
+		 if(mySeven==systemSeven){
+			return "4+1";	 
+		 }
+			return "4+0";	 
+		}
+		if(step==3){
+		 if(mySeven==systemSeven){
+			return "3+1";	 
+		 }
+		}
+		if(step==2){
+		 if(mySeven==systemSeven){
+			return "2+1";	 
+		 }
+		}
+		if(step==1){
+		 if(mySeven==systemSeven){
+			return "1+1";	 
+		 }
+		}
+		 if(mySeven==systemSeven){
+			return "0+1";	 
+		 }
+		 return "0+0";	 
+    },
+    result: function (rightArr, myArr) {
+      var msg = {
+        "6+1": { msg:"一等奖      6,951,733元",amount :6951733 },
+        "6+0": { msg:"二等奖      114,911元",amount : 114911 },
+        "5+1": { msg:"三等奖      3000元",amount :3000 },
+		
+        "5+0": { msg:"四等奖      200元",amount :200 },
+        "4+1": { msg:"四等奖      200元",amount :200 },
+		
+		"4+0": { msg:"五等奖      10元",amount :10 },
+		"3+1": { msg:"五等奖      10元",amount :10 },
+		
+		"2+1": { msg:"六等奖      5元",amount :5 },
+		"1+1": { msg:"六等奖      5元",amount :5 },
+		"0+1": { msg:"六等奖      5元",amount :5 },
+		"0+0": { msg:"遗憾没有中奖",amount :0 },
+      }
+      var kind = this.check(rightArr, myArr);
+	 
+      switch (kind) {
+        case "6+1": this.balance += 6951733; break;
+        case "6+0": this.balance += 114911; break;
+        case "5+1": this.balance += 3000; break;
+		
+        case "5+0": this.balance += 200; break;
+        case "4+1": this.balance += 200; break;
+        
+		case "4+0": this.balance += 10; break;
+        case "3+1": this.balance += 10; break;
+        
+		case "2+1": this.balance += 5; break;
+        case "1+1": this.balance += 5; break;
+		case "0+1": this.balance += 5; break;
+      }
+      this.msg(msg[kind].msg); 
+      return msg[kind].amount;
+    },
+    goTOdivBottom: function () {
+      var div = document.querySelector('.histoey');
+      div.scrollTop = div.scrollHeight;
+      var msg = document.querySelector('.msg');
+      msg.scrollTop = msg.scrollHeight;
+    },
+    date: function () {
+      return new Date().Format("HH:mm:ss");
+    },
+    open1: function () {
+      table = document.querySelector("#srvTable")
+      row = table.insertRow();
+      cels = []
+      for (var i = 0; i < 3; i++) {
+        cels[i] = row.insertCell(i)
+      }
+
+      cels[0].innerHTML = "1"
+      cels[1].innerHTML = "2"
+      cels[2].innerHTML = "3"
+
+    },
+	system: function () {
+	var arr= []
+	for(var i=0;i<33;i++){ arr[i]=i+1;}
+	var x = []
+	while(x.length<6){
+	   var index = -~(Math.random() * arr.length);
+	   if(arr[index]){
+			x.push(arr[index])
+			delete arr[index]
+	   }
+	}
+	x.push( -~(Math.random() * 16)) 
+	return x;
+	},
+    open: function () {
+      x= this.system() 
+      s = document.getElementById('open').innerHTML
+      s = document.getElementById('my').value.replace(/[^0-9,]/gi, "")
+      if (!s) {
+        this.msg("没有 竞猜哦")
+        return
+      }
+      this.balance -=2;
+      s = s.split(",")
+      s = s.slice(0, 7)
+
+      table = document.querySelector("#main")
+      row = table.insertRow();
+      cels = []
+      for (var i = 0; i < 5; i++) {
+        cels[i] = row.insertCell(i)
+      }
+
+      cels[0].innerHTML = this.date()
+      cels[1].innerHTML = JSON.stringify(x)
+      cels[2].innerHTML = s.join(",")
+      cels[3].innerHTML = this.result(x, s)
+      cels[4].innerHTML = this.balance
+ 
+      this.updateUI()
+      this.goTOdivBottom()
+
+
+    },
+    ui: 1
+  }
+  ui.init()
+  // ui.open()
+</script>
